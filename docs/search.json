@@ -4,20 +4,90 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "The Johns Hopkins University\nSept. 2022 - Expected May 2024\nMajor: Biostatistics (Master of Science)\nUniversity of California Berkeley, Berkeley, CA\nAug. 2021 - Dec. 2021\nGLOBE Visiting Student Program, Bioengineering\nUniversity of Chinese Academy of Sciences, Beijing, China\nSept. 2018 - June 2022\nMajor: Biological Science (Bachelor of Science)\nMinor: Computer Science"
+  },
+  {
+    "objectID": "about.html#academic-experiences",
+    "href": "about.html#academic-experiences",
+    "title": "About",
+    "section": "ACADEMIC EXPERIENCES",
+    "text": "ACADEMIC EXPERIENCES\nUndergraduate Student Researcher | PI: Yi Du (duyi@psych.ac.cn)\nJan. 2020 - Aug. 2021\nInstitution: Institue of Psychology, Chinese Academy of Sciences\nResearch: Long term of musical training enhances the ability of empathy\nUndergraduate Student Researcher | PI: Zhuqing Zhang (zhuqingzhang@ucas.ac.cn)\nJune 2020 - Aug. 2021\nInstitution: University of Chinese Academy of Sciences, College of Life Sciences\nResearch: LLPSDB v2.0, an updated database of proteins undergoing liquid-liquid phase separation (LLPS) in vitro\nTeaching Assistant | Professor: Yanli Wang (ylwang@ibp.ac.cn)\nSept. 2020 - Jan. 2021\nInstitution: University of Chinese Academy of Sciences, College of Life Sciences\nCourse: Experiments of Biochemistry and Molecular Biology"
+  },
+  {
+    "objectID": "about.html#extracurricular-activities",
+    "href": "about.html#extracurricular-activities",
+    "title": "About",
+    "section": "EXTRACURRICULAR ACTIVITIES",
+    "text": "EXTRACURRICULAR ACTIVITIES\nUCAS Science and Technology Department, Member\nSept. 2018 - Jan. 2019\nUCAS Basketball Club, Vice President\nJuly 2019 - Oct. 2019\nPaleozoological Museum of China, Volunteer as a Museum Interpreter\nOct. 2019 - Dec. 2019"
+  },
+  {
+    "objectID": "Example analysis.html",
+    "href": "Example analysis.html",
+    "title": "Example analysis",
+    "section": "",
+    "text": "Compared to Beyonce(“Beyoncé” 2022), is Taylor Swift(“Taylor Swift” 2022) more influential around the world?"
+  },
+  {
+    "objectID": "Example analysis.html#the-intended-audience-for-the-data-analysis",
+    "href": "Example analysis.html#the-intended-audience-for-the-data-analysis",
+    "title": "Example analysis",
+    "section": "The intended audience for the data analysis",
+    "text": "The intended audience for the data analysis\nThe fans of Taylor Swift and Beyonce."
+  },
+  {
+    "objectID": "Example analysis.html#original-data",
+    "href": "Example analysis.html#original-data",
+    "title": "Example analysis",
+    "section": "Original data",
+    "text": "Original data\nThe datasets for the analysis here comes from TidyTuesday.\n\n\n\n\n\n\nPay Attention\n\n\n\nTidyTuesday is a weekly podcast and community activity brought to you by the R4DS Online Learning Community. Its goal is to help R learners learn in real-world contexts.\n\n\nLet’s dive into the album sales and lyrics from these two artists to figure out their impact on the world.(n.d.)\nData dictionary avaialble here:\n\nhttps://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-09-29\n\n\n\n\nBeyoncé (left) and Taylor Swift (right)"
+  },
+  {
+    "objectID": "Example analysis.html#load-the-data",
+    "href": "Example analysis.html#load-the-data",
+    "title": "Example analysis",
+    "section": "Load the data",
+    "text": "Load the data\n\nlibrary(tidyverse)\n\n── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──\n✔ ggplot2 3.3.6     ✔ purrr   0.3.4\n✔ tibble  3.1.7     ✔ dplyr   1.0.9\n✔ tidyr   1.2.0     ✔ stringr 1.4.0\n✔ readr   2.1.2     ✔ forcats 0.5.1\n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\n\nlibrary(lubridate)\n\n\nAttaching package: 'lubridate'\n\nThe following objects are masked from 'package:base':\n\n    date, intersect, setdiff, union\n\nlibrary(here)\n\nhere() starts at C:/Users/Lenovo/Desktop/git/YanzhenyuGao.github.io\n\nlibrary(tidytext)\nlibrary(wordcloud)\n\nLoading required package: RColorBrewer\n\nlibrary(textdata)\n\nb_lyrics <- readRDS(here(\"data\",\"b_lyrics.RDS\"))\nts_lyrics <- readRDS(here(\"data\",\"ts_lyrics.RDS\"))\nsales <- readRDS(here(\"data\",\"sales.RDS\"))"
+  },
+  {
+    "objectID": "Example analysis.html#the-difference-of-total-album-sales-between-two-artists.",
+    "href": "Example analysis.html#the-difference-of-total-album-sales-between-two-artists.",
+    "title": "Example analysis",
+    "section": "The difference of total album sales between two artists.",
+    "text": "The difference of total album sales between two artists.\nHere we discuss the influence of two artists by calculating their total album sales.\n\n\n\n\n\n\nRestricted Location\n\n\n\nWe only focus on the album sales in the US, UK and the whole world.\n\n\n\n\n#remove things like (US)[51] and create a column called released that is a Date class.\nmysales <- sales\nmoved_pattern <- \"\\\\(.+\\\\)\\\\[.+\\\\]\"\ntarget_pattern <- grep(moved_pattern, mysales$released)\nmysales$released[target_pattern] <- str_sub(mysales$released[target_pattern], \n        start = 1,  end = unlist(gregexpr(\"\\\\(\", mysales$released[target_pattern]))-1)\n\nmysales$released <- mdy(mysales$released)\n\n#create a factor called country, Transform the sales and filter the data frame.\nmysales$country <- fct_collapse(mysales$country, \"World\" = c(\"WW\", \"World\"), \"FR\" = c(\"FR\", \"FRA\"))\nmysales$sales <- mysales$sales/1000000\nmysales <- rename(mysales, sales_in_millions = sales)\nmysales_restricted_in_UK_US_World <- mysales %>% \n  filter(country %in% c(\"World\", \"UK\", \"US\"))\n\n#Calculate the total album sales for each artist and for each country.\nmy_total_sales_restricted_in_UK_US_World <- mysales_restricted_in_UK_US_World %>% \n  group_by(artist, country) %>% \n  summarise(total_sales_in_millions = sum(sales_in_millions), .groups = 'drop')\n(my_total_sales_restricted_in_UK_US_World)\n\n# A tibble: 6 × 3\n  artist       country total_sales_in_millions\n  <chr>        <fct>                     <dbl>\n1 Beyoncé      UK                         5.24\n2 Beyoncé      US                        17.7 \n3 Beyoncé      World                     34.5 \n4 Taylor Swift UK                         3.32\n5 Taylor Swift US                        31.7 \n6 Taylor Swift World                     40.8 \n\n\n#create a percent stacked barchart.\nmy_total_sales_restricted_in_UK_US_World %>% \n  ggplot(aes(x = artist, y = total_sales_in_millions, fill = country)) + \n  geom_bar(position=\"fill\", stat = \"identity\") +\n  labs(x = \"Artists\", y = \"Percentage of Sales of Albums (in millions)\", \n       title = \"Percentage of Sales of Albums of Taylor Swift and Beyonce in Different Regions\", \n       subtitle = \"Compared to Beyonce, Taylor Swift had better sales of albums in the United States and in the \\nwhole world.\",\n       caption = \"Credit to: Yangzhenyu Gao\") +\n  theme(plot.title = element_text(color = \"dark blue\", hjust = 0.5),\n        plot.caption = element_text(color =\"blue\"),\n        plot.subtitle = element_text(color = \"blue\"))\n\n\n\n\nConclusion: Compared to Beyonce, Taylor Swift had better sales of albums in the United States and in the whole world. The result indicates that Taylor Swift has better influence on the world from the perspective of album sales."
+  },
+  {
+    "objectID": "Example analysis.html#the-trend-of-sales-of-albums-from-two-artists.",
+    "href": "Example analysis.html#the-trend-of-sales-of-albums-from-two-artists.",
+    "title": "Example analysis",
+    "section": "The trend of sales of albums from two artists.",
+    "text": "The trend of sales of albums from two artists.\n\n#Create a scatter plot of sales of albums along the y-axis by the released date for each album along the x-axis.\nmysales_restricted_in_UK_US_World %>% \n  ggplot(aes(x = released, y = sales_in_millions, col = artist)) +\n  geom_point() + \n  facet_grid(rows = vars(country)) +\n  labs(x = \"Released Date of each Album\", y = \"Sales of Albums (in millions)\", \n       title = \"Scatter Plot for Sales of each Album from Taylor Swift and Beyonce\", \n       subtitle = \"For Beyonce, the sales of her album decreases over time in the Whole world. For Taylor Swift, \\nthe sales of her album fluctuates with the time and there is also a decreasing trend.\",\n       caption = \"Credit to: Yangzhenyu Gao\") +\n  theme(plot.title = element_text(color = \"dark blue\", hjust = 0.5),\n        plot.caption = element_text(color =\"blue\"),\n        plot.subtitle = element_text(color = \"blue\"))\n\n\n\n\nConclusion: For Beyonce, the sales of her album decreases over time in the Whole world. For Taylor Swift, the sales of her album fluctuates with the time and there is also a mild decreasing trend. The result indicates that the impact of Taylor Swift and beyonce both decreases and the decreasing trend of beyonce is stronger."
+  },
+  {
+    "objectID": "Example analysis.html#frequency-of-positive-negative-and-neutral-words-in-lyrics-from-two-artists.",
+    "href": "Example analysis.html#frequency-of-positive-negative-and-neutral-words-in-lyrics-from-two-artists.",
+    "title": "Example analysis",
+    "section": "Frequency of positive, negative and neutral words in lyrics from two artists.",
+    "text": "Frequency of positive, negative and neutral words in lyrics from two artists.\n\n#create a column called line with one line containing the character string for each line of Taylor Swift’s songs.\nmy_ts_lyrics_lines <- ts_lyrics %>% \n  unnest_tokens(output = line, input =Lyrics, token = \"lines\")\n\n#Calculate the total number for each word in the lyrics.\nmy_b_lyrics_words <- b_lyrics %>% \n  unnest_tokens(output = word, input =line, token = \"words\") %>% \n  anti_join(stop_words, by = \"word\") %>% \n  count(word, sort = TRUE) %>% \n  left_join(get_sentiments(\"bing\"), by = \"word\") %>%\n  head(n=25)\n\n#Create a bar plot with the top words on the y-axis and the frequency of each word on the x-axis. \nmy_b_lyrics_words %>% \n  mutate(word = fct_reorder(word, n)) %>% \n  ggplot(aes(x = n, y = word, fill = sentiment))+ \n  geom_col() +\n  labs(x = \"Frequency of Word\", y = \"Words Shown in Lyrics of Beyonce\", \n       title = \"Bar Plot for Frequency of Top 25 Words in Beyonce's Lyrics\", \n       subtitle = \"In the top 25 words, the only one negative word is crazy and two positive words are love\\nand top. The word love shows up most frequently.\",\n       caption = \"Credit to: Yangzhenyu Gao\") +\n  theme(plot.title = element_text(color = \"dark blue\", hjust = 0.5),\n        plot.caption = element_text(color =\"blue\"),\n        plot.subtitle = element_text(color = \"blue\")) + \n  scale_fill_discrete(labels=c(\"Negative\", \"Positive\", \"Neutral\"))\n\n\n\n#Calculate the total number for each word in the lyrics.\nmy_ts_lyrics_words <- my_ts_lyrics_lines %>% \n  unnest_tokens(output = word, input =line, token = \"words\") %>% \n  anti_join(stop_words, by = \"word\") %>% \n  count(word, sort = TRUE) %>% \n  left_join(get_sentiments(\"bing\"), by = \"word\") %>%\n  head(n=25)\n\n#Create a bar plot with the top words on the y-axis and the frequency of each word on the x-axis. \nmy_ts_lyrics_words %>% \n  mutate(word = fct_reorder(word, n)) %>% \n  ggplot(aes(x = n, y = word, fill = sentiment))+ \n  geom_col() +\n  labs(x = \"Frequency of Word\", y = \"Words Shown in Lyrics of TS\", \n       title = \"Bar Plot for Frequency of Top 25 Words in Taylor Swift's Lyrics\", \n       subtitle = \"In the top 25 words, the only one positive word is love and three negative words are bad,\\nshake and break. The word love shows up most frequently.\",\n       caption = \"Credit to: Yangzhenyu Gao\") +\n  theme(plot.title = element_text(color = \"dark blue\", hjust = 0.5),\n        plot.caption = element_text(color =\"blue\"),\n        plot.subtitle = element_text(color = \"blue\")) + \n  scale_fill_discrete(labels=c(\"Negative\", \"Positive\", \"Neutral\"))\n\n\n\n\nConclusion: The lyrics from Beyonce and Taylor Swift both contain many neutral words and positive words, which is a great sign that those songs can heal people."
+  },
+  {
+    "objectID": "Example analysis.html#conclusion",
+    "href": "Example analysis.html#conclusion",
+    "title": "Example analysis",
+    "section": "Conclusion",
+    "text": "Conclusion\nTaylor Swift has greater influence around the world nowadays."
+  },
+  {
+    "objectID": "Example analysis.html#list-of-my-functions",
+    "href": "Example analysis.html#list-of-my-functions",
+    "title": "Example analysis",
+    "section": "List of my functions",
+    "text": "List of my functions\nFrom dplyr or tidyr: 1.rename 2.filter 3.group_by 4.summarise 5.anti_join 6.left_join 7.mutate\nFrom ggplot2: 1.geom_col 2.geom_point 3.geom_bar 4.facet_grid"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "YanzhenyuGao.github.io",
     "section": "",
-    "text": "Yangzhenyu Gao is a boy."
-  },
-  {
-    "objectID": "index.html#education",
-    "href": "index.html#education",
-    "title": "YanzhenyuGao.github.io",
-    "section": "Education",
-    "text": "Education\nThe Johns Hopkins University\nSept. 2022 - Expected May 2024\nMajor: Biostatistics (Master of Science)\nUniversity of California Berkeley, Berkeley, CA\nAug. 2021 - Dec. 2021\nGLOBE Visiting Student Program, Bioengineering\nUniversity of Chinese Academy of Sciences, Beijing, China\nSept. 2018 - June 2022\nMajor: Biological Science (Bachelor of Science)\nMinor: Computer Science"
+    "text": "Yangzhenyu Gao\nI am master student in Johns Hopkins University. My professional goal is to experience the diversity of the community in the Johns Hopkins University and figure out one research area that I truly love. Furthermore, I want to pursue a Phd degree and become a biostatistician."
   }
 ]
