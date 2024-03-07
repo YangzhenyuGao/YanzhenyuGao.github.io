@@ -1,15 +1,21 @@
 ---
-title: "YanzhenyuGao.github.io"
+title: "Yanzhenyu Gao"
 about:
-  template: jolla
-  image: profile.jpg
-  links:
-    - icon: github
-      text: Github
-      href: https://github.com/YangzhenyuGao
+  template: trestles
+  image: img/profile.jpg
+#  links:
+#    - icon: github
+#      text: Github
+#      href: https://github.com/YangzhenyuGao
+#    - icon: envelope
+#      text: Email
+#      href: "gatzgao@gmail.com"
+      
 ---
 
-Yangzhenyu Gao 
+::: {#about-block}
+:::
+
+Yangzhenyu Gao
 
 I am master student in Johns Hopkins University. My professional goal is to experience the diversity of the community in the Johns Hopkins University and figure out one research area that I truly love. Furthermore, I want to pursue a Phd degree and become a biostatistician.
-
